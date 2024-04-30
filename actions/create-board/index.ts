@@ -8,7 +8,7 @@ import { createSafeAction } from '@/lib/create-safe-action';
 import { InputType, ReturnType } from './types';
 import { CreateBoard } from './schema';
 
-async function handler(data: InputType): Promise<ReturnType> {
+const handler = async (data: InputType): Promise<ReturnType> => {
   const { userId } = auth();
   if (!userId) {
     return {
@@ -27,7 +27,7 @@ async function handler(data: InputType): Promise<ReturnType> {
     });
   } catch (error) {
     return {
-      error: 'Database Error',
+      error: 'Database Error - Failed to create board',
     };
   }
 
@@ -35,5 +35,5 @@ async function handler(data: InputType): Promise<ReturnType> {
   return {
     data: board,
   };
-}
+};
 export const createBoard = createSafeAction(CreateBoard, handler);
