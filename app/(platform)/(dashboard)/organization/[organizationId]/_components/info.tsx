@@ -3,12 +3,13 @@
 import Image from 'next/image';
 import { useOrganization } from '@clerk/nextjs';
 import { CreditCard } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function Info() {
   const { organization, isLoaded } = useOrganization();
 
   if (!isLoaded) {
-    return <div>Loading...</div>;
+    return <Info.Skeleton />;
   }
 
   return (
@@ -31,3 +32,20 @@ export default function Info() {
     </div>
   );
 }
+
+Info.Skeleton = function InfoSkeleton() {
+  return (
+    <div className='flex items-center gap-x-4'>
+      <div className='w-[60px] h-[60px] relative animate-pulse'>
+        <Skeleton className='w-full h-full absolute' />
+      </div>
+      <div className='space-y-2 animate-pulse'>
+        <Skeleton className='h-10 w-[200px]' />
+        <div className='flex items-center'>
+          <Skeleton className='h-4 w-4 mr-2' />
+          <Skeleton className='h-4 w-4' />
+        </div>
+      </div>
+    </div>
+  );
+};
