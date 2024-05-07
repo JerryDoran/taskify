@@ -6,12 +6,14 @@ import {
   PopoverContent,
   PopoverClose,
 } from '@/components/ui/popover';
+import { toast } from 'sonner';
 import { useAction } from '@/hooks/use-action';
 import { createBoard } from '@/actions/create-board/index';
 import { FormInput } from '@/components/form/form-input';
 import FormSubmit from './form-submit';
 import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
+import FormPicker from './form-picker';
 
 type FormPopoverProps = {
   children: React.ReactNode;
@@ -26,6 +28,23 @@ export default function FormPopover({
   align,
   sideOffset = 0,
 }: FormPopoverProps) {
+  const { execute, fieldErrors } = useAction(createBoard, {
+    onSuccess: (data) => {
+      toast.success('Board created');
+    },
+    onError: (error) => {
+      toast.error(error);
+    },
+  });
+
+  function onSubmit(formData: FormData) {
+    const title = formData.get('title') as string;
+    const image = formData.get('image') as string;
+
+    if (typeof title !== 'string') return;
+    execute({ title, image });
+  }
+
   return (
     <Popover>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
@@ -46,6 +65,18 @@ export default function FormPopover({
             <X className='h-4 w-4' />
           </Button>
         </PopoverClose>
+        <form action={onSubmit} className='space-y-4'>
+          <div className='space-y-4'>
+            <FormPicker id='image' errors={fieldErrors} />
+            <FormInput
+              id='title'
+              label='Board Name'
+              type='text'
+              errors={fieldErrors}
+            />
+          </div>
+          <FormSubmit className='w-full'>Create</FormSubmit>
+        </form>
       </PopoverContent>
     </Popover>
   );
