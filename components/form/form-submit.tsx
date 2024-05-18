@@ -22,7 +22,7 @@ export default function FormSubmit({
   children,
   className,
   disabled,
-  variant = 'default',
+  variant = 'primary',
 }: FormSubmitProps) {
   const { pending } = useFormStatus();
 

@@ -1,14 +1,17 @@
 'use client';
 
+import { ElementRef, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+import { useAction } from '@/hooks/use-action';
+import { createBoard } from '@/actions/create-board/index';
+
 import {
   Popover,
   PopoverTrigger,
   PopoverContent,
   PopoverClose,
 } from '@/components/ui/popover';
-import { toast } from 'sonner';
-import { useAction } from '@/hooks/use-action';
-import { createBoard } from '@/actions/create-board/index';
 import { FormInput } from '@/components/form/form-input';
 import FormSubmit from './form-submit';
 import { Button } from '@/components/ui/button';
@@ -28,9 +31,14 @@ export default function FormPopover({
   align,
   sideOffset = 0,
 }: FormPopoverProps) {
+  const router = useRouter();
+  const closeRef = useRef<ElementRef<'button'>>(null);
+
   const { execute, fieldErrors } = useAction(createBoard, {
     onSuccess: (data) => {
       toast.success('Board created');
+      closeRef.current?.click();
+      router.push(`/board/${data.id}`);
     },
     onError: (error) => {
       toast.error(error);
@@ -57,7 +65,7 @@ export default function FormPopover({
         <div className='text-sm font-medium text-center pb-4 text-neutral-600'>
           Create board
         </div>
-        <PopoverClose asChild>
+        <PopoverClose ref={closeRef} asChild>
           <Button
             className='h-auto w-auto p-2 absolute top-2 right-2 text-neutral-600'
             variant='ghost'
