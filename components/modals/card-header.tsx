@@ -2,6 +2,9 @@
 
 import { useState, useRef, ElementRef } from 'react';
 import { useParams } from 'next/navigation';
+import { toast } from 'sonner';
+import { useAction } from '@/hooks/use-action';
+import { updateCard } from '@/actions/update-card/index';
 import { CardWithList } from '@/types';
 import { FormInput } from '@/components/form/form-input';
 import { useQueryClient } from '@tanstack/react-query';
@@ -18,6 +21,20 @@ export default function CardHeader({ data }: CardHeaderProps) {
   const params = useParams();
   const [title, setTitle] = useState(data.title);
 
+  const { execute } = useAction(updateCard, {
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: ['card', data.id],
+      });
+
+      toast.success(`Renamed to '${data.title}'`);
+      setTitle(data.title);
+    },
+    onError: (error) => {
+      toast.error(error);
+    },
+  });
+
   const queryClient = useQueryClient();
 
   function onBlur() {
@@ -25,7 +42,16 @@ export default function CardHeader({ data }: CardHeaderProps) {
   }
 
   function handleSubmit(formData: FormData) {
-    console.log(formData.get('title'));
+    const title = formData.get('title') as string;
+    const boardId = params.boardId as string;
+
+    if (title === data.title) return;
+
+    execute({
+      title,
+      boardId,
+      id: data.id,
+    });
   }
 
   return (
