@@ -27,6 +27,10 @@ export default function CardHeader({ data }: CardHeaderProps) {
         queryKey: ['card', data.id],
       });
 
+      queryClient.invalidateQueries({
+        queryKey: ['card-logs', data.id],
+      });
+
       toast.success(`Renamed to '${data.title}'`);
       setTitle(data.title);
     },
