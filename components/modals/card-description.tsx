@@ -1,6 +1,6 @@
 'use client';
 
-import { ref, ElementRef, useState, useRef } from 'react';
+import { ElementRef, useState, useRef } from 'react';
 import { useEventListener, useOnClickOutside } from 'usehooks-ts';
 import { CardWithList } from '@/types';
 import { Skeleton } from '@/components/ui/skeleton';
